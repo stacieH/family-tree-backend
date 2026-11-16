@@ -1,9 +1,14 @@
 const mongoose = require('mongoose')
 
 const FamilyMemberSchema = new mongoose.Schema({
-    name:{
+    first_name:{
         type: String,
-        required: [true, 'Name is missing'],
+        required: [true, 'First Name is missing'],
+        trim: true
+    },
+    last_name:{
+        type: String,
+        required: [true, 'Last Name is missing'],
         trim: true
     },
     nickname:{
@@ -15,11 +20,11 @@ const FamilyMemberSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
-    age: {
-        type: Number,
-        min:[0, "Age cannot be negative"],
-        default: null
-    },
+    // age: {
+    //     type: Number,
+    //     min:[0, "Age cannot be negative"],
+    //     default: null
+    // },
     relationship: {
         type: String,
         trim: true,
@@ -28,7 +33,7 @@ const FamilyMemberSchema = new mongoose.Schema({
     parents:[
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "FamilyMember"
+            ref: "family_member"
         }
     ]
 }, {
@@ -36,6 +41,6 @@ const FamilyMemberSchema = new mongoose.Schema({
     versionKey: false
 })
 
-const FamilyMember = mongoose.model('FamilyMember', FamilyMemberSchema )
+const FamilyMember = mongoose.model('family_member', FamilyMemberSchema )
 
 module.exports = {FamilyMember}
