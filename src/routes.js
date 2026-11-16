@@ -7,19 +7,20 @@ const {
 } = require('./controller')
 
 const routes = (app) => {
+    // Family members collection
     app.route('/members')
-        .get((req, res, next)=>{
-            next();
-        },getMember)
+        // get list
+        .get(getMember)
         // create
         .post(addNewFamily)
         
+    // Individual family member
     app.route('/members/:id')
-        // get specific contact
+        // get specific member
         .get(getMemberById)
-        // updating specific contact
+        // updating specific member
         .put(updateMember)
-        // deleting specific contact
+        // deleting specific member
         .delete(deleteMember)
 }
 
