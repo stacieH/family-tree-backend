@@ -1,6 +1,5 @@
 
 require('dotenv').config();
-const dns = require('dns');
 const express = require('express');
 const  cors = require('cors')
 const mongoose = require('mongoose')
@@ -10,12 +9,19 @@ const app = express()
 
 const PORT = process.env.PORT || 3020;
 const MONGO_URI = process.env.MONGO_URI;
+const isDevelopment = process.env.NODE_ENV !== 'production'
 
-// set DNS Servers (fixed connecting issue from MongoDB Atlas)
-dns.setServers([
-    '8.8.8.8',
-    '8.8.4.4'
-]);
+if(isDevelopment){
+    // set DNS Servers (fixed connecting issue from MongoDB Atlas)
+    const dns = require('dns');
+    dns.setServers([
+        '8.8.8.8',
+        '8.8.4.4'
+    ]);
+
+    // Log
+    mongoose.set('debug', true);
+}
 
 // Validate environment variables
 if(!MONGO_URI){
@@ -67,8 +73,6 @@ const startServer = async () => {
         process.exit(1);
     }
 };
-
-mongoose.set('debug', process.env.NODE_ENV !== 'production');
 
 console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
 console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
