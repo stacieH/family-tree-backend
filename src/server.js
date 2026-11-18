@@ -1,27 +1,61 @@
+
+require('dotenv').config();
+
 const express = require('express');
-const  bodyParser = require('body-parser')
-const  cors = require('cors')
+const cors = require('cors');
+const { routes } = require('./routes');
+const { setDns } = require('./helpers/setDns');
+const { connectDB } = require('./helpers/mongoDbConnection');
 
-const mongoose = require('mongoose')
-const  {routes} = require('./routes')
+const app = express();
 
-const app = express()
-const PORT = 3020;
+const PORT = process.env.PORT || 3020;
+const isLocalDevelopment = require.main === module
 
-mongoose.connect('mongodb://localhost/members',{
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+isLocalDevelopment && setDns()
 
-app.use(cors())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-routes(app)
+// Health check
+app.get('/', (_, res) => {
+    res.status(200).json({
+        message: `Running on Port ${PORT}`,
+        port: PORT,
+        status: 'OK'
+    });
+});
 
-app.get('/',(_,res)=>{
-    res.send(`Running on Port ${PORT}`)
-})
-app.listen(PORT, ()=>{
-    console.log('Server started at localhost:3020')
-})
+// Ensure database connection before API routes
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error('DATABASE MIDDLEWARE ERROR:', {
+            name: error.name,
+            message: error.message,
+            code: error.code,
+            stack: error.stack
+        });
+
+        res.status(503).json({
+            message: 'Database connection unavailable',
+            error: error.name
+        });
+    }
+});
+
+// API routes
+routes(app);
+
+if (isLocalDevelopment) {
+    app.listen(PORT, () => {
+        console.log(`Server started at localhost:${PORT}`);
+    });
+}
+
+// Export Express application for Vercel
+module.exports = app;

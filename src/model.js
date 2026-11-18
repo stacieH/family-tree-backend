@@ -1,20 +1,46 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema
 
-const FamilyMemberSchema = new Schema({
-    name:{
+const FamilyMemberSchema = new mongoose.Schema({
+    first_name:{
         type: String,
-        required: 'name is missing'
+        required: [true, 'First Name is missing'],
+        trim: true
     },
-    nickname:String,
-    age: Number,
-    relationship: String,
-    date_created:{
-        type:Date,
-        default: Date.now
-    }
+    last_name:{
+        type: String,
+        required: [true, 'Last Name is missing'],
+        trim: true
+    },
+    nickname:{
+        type: String,
+        trim: true,
+        default: null
+    },
+    birthdate: {
+        type: Date,
+        default: null
+    },
+    // age: {
+    //     type: Number,
+    //     min:[0, "Age cannot be negative"],
+    //     default: null
+    // },
+    relationship: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    parents:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "family_member"
+        }
+    ]
+}, {
+    timestamps: true,
+    versionKey: false
 })
 
-const FamilyMember = mongoose.model('FamilyMember', FamilyMemberSchema )
+const FamilyMember = mongoose.model('family_member', FamilyMemberSchema )
 
 module.exports = {FamilyMember}
