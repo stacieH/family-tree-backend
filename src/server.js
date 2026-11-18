@@ -3,7 +3,6 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const { routes } = require('./routes');
 const { setDns } = require('./helpers/setDns');
 const { connectDB } = require('./helpers/mongoDbConnection');
@@ -11,12 +10,9 @@ const { connectDB } = require('./helpers/mongoDbConnection');
 const app = express();
 
 const PORT = process.env.PORT || 3020;
-const isDevelopment = process.env.NODE_ENV !== 'production';
 const isLocalDevelopment = require.main === module
 
 isLocalDevelopment && setDns()
-
-mongoose.set('debug', isDevelopment);
 
 // Middleware
 app.use(cors());
@@ -38,7 +34,6 @@ app.use(async (req, res, next) => {
         await connectDB();
         next();
     } catch (error) {
-
         console.error('DATABASE MIDDLEWARE ERROR:', {
             name: error.name,
             message: error.message,

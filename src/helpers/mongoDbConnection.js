@@ -1,3 +1,10 @@
+const mongoose = require('mongoose');
+
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+mongoose.set('debug', isDevelopment);
+
+
 const MONGO_URI = process.env.MONGO_URI;
 
 // Validate environment variables
