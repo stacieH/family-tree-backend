@@ -38,8 +38,17 @@ app.use(async (req, res, next) => {
         await connectDB();
         next();
     } catch (error) {
+
+        console.error('DATABASE MIDDLEWARE ERROR:', {
+            name: error.name,
+            message: error.message,
+            code: error.code,
+            stack: error.stack
+        });
+
         res.status(503).json({
-            message: 'Database connection unavailable'
+            message: 'Database connection unavailable',
+            error: error.name
         });
     }
 });

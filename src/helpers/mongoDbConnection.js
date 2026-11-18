@@ -16,7 +16,7 @@ if (!cached) {
 }
 
 // Connect to MongoDB
-export const connectDB = async () => {
+const connectDB = async () => {
     if (cached.conn && mongoose.connection.readyState === 1) {
         return cached.conn;
     }
@@ -46,3 +46,6 @@ export const connectDB = async () => {
         throw error;
     }
 };
+
+
+module.exports = { connectDB };
